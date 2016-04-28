@@ -1,8 +1,21 @@
 pingURL
 =======
 
-pingURL is a simple go program that pings one or more URLs that user specified
-or URLs under a file or files in a directory.
+pingURL is a simple go program that pings an URLs that user specified or URLs
+under a file or files in a directory.
+
+
+Usage
+-----
+
+Give an url or file path or directory path to the program via commandline
+option.  Use `-url` option for an url, `-file` option for file path, and `-dir`
+option for directory path.
+
+For example:
+```
+$ pingURL -url https://kernel.org
+```
 
 
 License
