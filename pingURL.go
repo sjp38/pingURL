@@ -21,6 +21,12 @@ func pingURL(url string) bool {
 	return resp.StatusCode == http.StatusOK
 }
 
+func handleFile(path string) {
+}
+
+func handleDir(path string) {
+}
+
 func main() {
 	flag.Parse()
 	fmt.Printf("url: \"%s\", file: \"%s\", dir: \"%s\"\n",
@@ -28,6 +34,12 @@ func main() {
 	if *url != "" && !pingURL(*url) {
 		fmt.Printf("URL %s looks not alive.\n", *url)
 		os.Exit(1)
+	}
+	if *file != "" {
+		handleFile(*file)
+	}
+	if *dir != "" {
+		handleDir(*dir)
 	}
 	os.Exit(0)
 }
