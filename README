@@ -1,0 +1,17 @@
+pingURL
+=======
+
+pingURL is a simple go program that pings one or more URLs that user specified
+or URLs under a file or files in a directory.
+
+
+License
+-------
+
+GPL v3
+
+
+Author
+------
+
+SeongJae Park (sj38.park@gmail.com)
