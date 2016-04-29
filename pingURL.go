@@ -39,7 +39,7 @@ func handleError(e error) {
 }
 
 func trim_url(url string) string {
-	lastChars := ")"
+	lastChars := ")."
 
 	runes := []rune(url)
 	lastRune := runes[len(runes)-1]
