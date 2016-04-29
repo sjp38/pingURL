@@ -25,6 +25,14 @@ func pingURL(url string) bool {
 	return resp.StatusCode == http.StatusOK
 }
 
+func asyncPingURL(url string, c chan string) {
+	res := ""
+	if !pingURL(url) {
+		res = url
+	}
+	c <- res
+}
+
 func handleError(e error) {
 	if e != nil {
 		log.Fatal(e)
@@ -69,9 +77,21 @@ func handleFile(path string) {
 
 	dat, err := ioutil.ReadFile(path)
 	urls := urlsIn(string(dat))
+	nrAsyncPings := 0
+	c := make(chan string)
 	for _, url := range urls {
-		if !pingURL(url) {
-			fmt.Printf("%s in %s looks not alive.\n", url, path)
+		nrAsyncPings += 1
+		go asyncPingURL(url, c)
+	}
+
+	nrDonePings := 0
+	for pingRes := range(c) {
+		if pingRes != "" {
+			fmt.Printf("%s in %s looks not alive.\n", pingRes, path)
+		}
+		nrDonePings += 1
+		if nrDonePings == nrAsyncPings {
+			close(c)
 		}
 	}
 }
