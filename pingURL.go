@@ -51,8 +51,8 @@ func urlsIn(text string) []string {
 		fields_after := strings.Fields(text[idx:])
 		if len(fields_after) > 0 {
 			url := fields_after[0]
-			if url[len(url) - 1] == ')' {
-				url = url[:len(url) - 1]
+			if url[len(url)-1] == ')' {
+				url = url[:len(url)-1]
 			}
 			urls = append(urls, url)
 		}
