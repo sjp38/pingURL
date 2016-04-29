@@ -13,8 +13,7 @@ import (
 
 var (
 	url  = flag.String("url", "", "URL to ping.")
-	file = flag.String("file", "", "file to ping URLs in it.")
-	dir  = flag.String("dir", "", "directory to ping URLs in it.")
+	file = flag.String("file", "", "file or dir to ping URLs in it.")
 )
 
 func pingURL(url string) bool {
@@ -62,7 +61,7 @@ func urlsIn(text string) []string {
 	return urls
 }
 
-func handleFile(path string) {
+func handleRegularFile(path string) {
 	f, err := os.Open(path)
 	handleError(err)
 
@@ -97,13 +96,13 @@ func handleFile(path string) {
 
 func visit(path string, f os.FileInfo, err error) error {
 	if !f.IsDir() {
-		handleFile(path)
+		handleRegularFile(path)
 	}
 
 	return nil
 }
 
-func handleDir(path string) {
+func handleFile(path string) {
 	f, err := os.Open(path)
 	handleError(err)
 
@@ -111,12 +110,11 @@ func handleDir(path string) {
 	handleError(err)
 
 	if !s.IsDir() {
-		log.Printf("-dir argument is not a path to dir.\n")
-		os.Exit(1)
+		handleRegularFile(path)
+	} else {
+		err = filepath.Walk(path, visit)
+		handleError(err)
 	}
-
-	err = filepath.Walk(path, visit)
-	handleError(err)
 }
 
 func main() {
@@ -127,9 +125,6 @@ func main() {
 	}
 	if *file != "" {
 		handleFile(*file)
-	}
-	if *dir != "" {
-		handleDir(*dir)
 	}
 	os.Exit(0)
 }
