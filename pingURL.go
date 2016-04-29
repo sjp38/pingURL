@@ -56,6 +56,7 @@ func handleFile(path string) {
 
 	s, err := f.Stat()
 	handleError(err)
+	f.Close()
 
 	if s.IsDir() {
 		log.Printf("-file argument is path to dir.\n")
