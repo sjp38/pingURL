@@ -87,8 +87,9 @@ func handleFile(path string) {
 	for nrDonePings := 0; nrDonePings < nrAsyncPings; nrDonePings++ {
 		pingRes := <-c
 		if pingRes != "" {
-			fmt.Printf("%s:\t `%s` looks not alive.\n",
-				path, pingRes)
+			fmt.Printf("\t%s%s looks not alive.\n",
+				"\x1B[33m", pingRes)
+			fmt.Printf("%s", "\x1B[0m")
 		}
 	}
 	close(c)
@@ -120,8 +121,6 @@ func handleDir(path string) {
 
 func main() {
 	flag.Parse()
-	fmt.Printf("url: \"%s\", file: \"%s\", dir: \"%s\"\n",
-		*url, *file, *dir)
 	if *url != "" && !pingURL(*url) {
 		fmt.Printf("URL %s looks not alive.\n", *url)
 		os.Exit(1)
