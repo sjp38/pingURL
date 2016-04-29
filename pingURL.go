@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -72,7 +73,28 @@ func handleFile(path string) {
 	}
 }
 
+func visit(path string, f os.FileInfo, err error) error {
+	if !f.IsDir() {
+		handleFile(path)
+	}
+
+	return nil
+}
+
 func handleDir(path string) {
+	f, err := os.Open(path)
+	handleError(err)
+
+	s, err := f.Stat()
+	handleError(err)
+
+	if !s.IsDir() {
+		log.Printf("-dir argument is not a path to dir.\n")
+		os.Exit(1)
+	}
+
+	err = filepath.Walk(path, visit)
+	handleError(err)
 }
 
 func main() {
