@@ -77,25 +77,21 @@ func handleFile(path string) {
 
 	dat, err := ioutil.ReadFile(path)
 	urls := urlsIn(string(dat))
+	nrAsyncPings := len(urls)
 	fmt.Printf("found %d URLS in %s. Now ping...\n", len(urls), path)
-	nrAsyncPings := 0
 	c := make(chan string)
 	for _, url := range urls {
-		nrAsyncPings += 1
 		go asyncPingURL(url, c)
 	}
 
-	nrDonePings := 0
-	for pingRes := range c {
+	for nrDonePings := 0; nrDonePings < nrAsyncPings; nrDonePings++ {
+		pingRes := <-c
 		if pingRes != "" {
 			fmt.Printf("%s:\t `%s` looks not alive.\n",
 				path, pingRes)
 		}
-		nrDonePings += 1
-		if nrDonePings == nrAsyncPings {
-			close(c)
-		}
 	}
+	close(c)
 }
 
 func visit(path string, f os.FileInfo, err error) error {
