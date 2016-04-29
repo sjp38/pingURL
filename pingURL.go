@@ -77,6 +77,7 @@ func handleFile(path string) {
 
 	dat, err := ioutil.ReadFile(path)
 	urls := urlsIn(string(dat))
+	fmt.Printf("found %d URLS in %s. Now ping...\n", len(urls), path)
 	nrAsyncPings := 0
 	c := make(chan string)
 	for _, url := range urls {
@@ -85,9 +86,10 @@ func handleFile(path string) {
 	}
 
 	nrDonePings := 0
-	for pingRes := range(c) {
+	for pingRes := range c {
 		if pingRes != "" {
-			fmt.Printf("%s in %s looks not alive.\n", pingRes, path)
+			fmt.Printf("%s:\t `%s` looks not alive.\n",
+				path, pingRes)
 		}
 		nrDonePings += 1
 		if nrDonePings == nrAsyncPings {
