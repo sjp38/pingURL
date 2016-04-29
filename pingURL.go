@@ -38,6 +38,23 @@ func handleError(e error) {
 	}
 }
 
+func trim_url(url string) string {
+	lastChars := ")"
+
+	runes := []rune(url)
+	lastRune := runes[len(runes)-1]
+
+	for _, ch := range lastChars {
+		if lastRune != ch {
+			continue
+		}
+		runes = runes[:len(runes)-1]
+		url = string(runes)
+		break
+	}
+	return url
+}
+
 func urlsIn(text string) []string {
 	var urls []string
 
@@ -50,9 +67,7 @@ func urlsIn(text string) []string {
 		fields_after := strings.Fields(text[idx:])
 		if len(fields_after) > 0 {
 			url := fields_after[0]
-			if url[len(url)-1] == ')' {
-				url = url[:len(url)-1]
-			}
+			url = trim_url(url)
 			urls = append(urls, url)
 		}
 		text = text[idx+4:]
