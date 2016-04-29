@@ -3,8 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
+	"strings"
 )
 
 var (
@@ -21,7 +24,51 @@ func pingURL(url string) bool {
 	return resp.StatusCode == http.StatusOK
 }
 
+func handleError(e error) {
+	if e != nil {
+		log.Fatal(e)
+	}
+}
+
+func urlsIn(text string) []string {
+	var urls []string
+
+	idx := 0
+	for {
+		idx = strings.Index(text, "http")
+		if idx == -1 {
+			break
+		}
+		fields_after := strings.Fields(text[idx:])
+		if len(fields_after) > 0 {
+			url := fields_after[0]
+			urls = append(urls, url)
+		}
+		text = text[idx+4:]
+	}
+
+	return urls
+}
+
 func handleFile(path string) {
+	f, err := os.Open(path)
+	handleError(err)
+
+	s, err := f.Stat()
+	handleError(err)
+
+	if s.IsDir() {
+		log.Printf("-file argument is path to dir.\n")
+		os.Exit(1)
+	}
+
+	dat, err := ioutil.ReadFile(path)
+	urls := urlsIn(string(dat))
+	for _, url := range urls {
+		if !pingURL(url) {
+			fmt.Printf("%s in %s looks not alive.\n", url, path)
+		}
+	}
 }
 
 func handleDir(path string) {
